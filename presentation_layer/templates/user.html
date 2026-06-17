@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>تسجيل / دخول</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    body { font-family: "Tajawal", sans-serif; background: #f7f7f7; }
+    .container { max-width: 400px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 20px; }
+    label { display: block; margin-top: 10px; }
+    input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+    .btn { width: 100%; margin-top: 15px; padding: 10px; border: none; border-radius: 5px; background: #007bff; color: white; cursor: pointer; }
+    .btn:hover { background: #0056b3; }
+    .toggle { text-align: center; margin-top: 15px; color: #007bff; cursor: pointer; }
+    .msg.error { color: red; text-align: center; margin-bottom: 10px; }
+    .msg.success { color: green; text-align: center; margin-bottom: 10px; }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>تسجيل / دخول</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">الرئيسية</a>
+
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if error %}
+      <p class="msg error">{{ error }}</p>
+    {% endif %}
+
+    <!-- نموذج تسجيل الدخول -->
+    <form id="loginForm" method="post">
+      <input type="hidden" name="action" value="login">
+      <h2>تسجيل الدخول</h2>
+      <label>البريد الإلكتروني</label>
+      <input type="email" name="email" required>
+      <label>كلمة المرور</label>
+      <input type="password" name="password" required>
+      <button type="submit" class="btn">دخول</button>
+      <p class="toggle" onclick="toggleForms()">ليس لديك حساب؟ <b>إنشاء حساب جديد</b></p>
+    </form>
+
+    <!-- نموذج التسجيل الجديد -->
+    <form id="registerForm" method="post" style="display:none;">
+      <input type="hidden" name="action" value="register">
+      <h2>إنشاء حساب جديد</h2>
+      <label>الاسم</label>
+      <input type="text" name="username" required>
+      <label>البريد الإلكتروني</label>
+      <input type="email" name="email" required>
+      <label>كلمة المرور</label>
+      <input type="password" name="password" required>
+      <button type="submit" class="btn">تسجيل</button>
+      <p class="toggle" onclick="toggleForms()">لديك حساب؟ <b>تسجيل الدخول</b></p>
+    </form>
+  </main>
+
+
+<script>
+async function doLogin() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch("http://localhost:8080/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            window.location.href = "http://localhost:5000/catalog";
+        } else {
+            alert("فشل تسجيل الدخول: " + (data.error || JSON.stringify(data)));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("حدث خطأ أثناء تسجيل الدخول.");
+    }
+}
+
+// ============================================
+// دالة التبديل بين نموذج الدخول ونموذج التسجيل
+// ============================================
+function toggleForms() {
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+
+    if (loginForm.style.display === "none") {
+        loginForm.style.display = "block";
+        registerForm.style.display = "none";
+    } else {
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>

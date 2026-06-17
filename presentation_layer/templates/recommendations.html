@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>أنشئ قصتك</title>
+<style>
+body { font-family: "Cairo", sans-serif; background-color: #f5f6fa; text-align: center; padding: 40px; }
+textarea, select, button { font-size: 16px; padding: 10px; margin: 10px; }
+.story-box { background: #fff; padding: 20px; border-radius: 15px; max-width: 600px; margin: 20px auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: right; direction: rtl; }
+</style>
+</head>
+<body>
+
+<h1>✨ أنشئ قصتك الخاصة ✨</h1>
+
+<form method="POST" >
+  <label>اكتب فكرة القصة:</label><br>
+  <textarea name="prompt" rows="4" cols="50"></textarea><br>
+
+  <label>اختر نوع القصة:</label>
+  <select name="type">
+    <option value="creative">إبداعية</option>
+    <option value="moral">ذات مغزى</option>
+    <option value="horror">رعب</option>
+  </select><br><br>
+
+  <button type="submit">أنشئ القصة</button>
+</form>
+
+{% if story %}
+  <h2>القصة الناتجة:</h2>
+  <div class="story-box">
+    <p>{{ story }}</p>
+  </div>
+
+  <!-- الزر الجديد -->
+
+   <form method="POST" action="{{ url_for('add_to_favorites') }}">
+    <input type="hidden" name="story" value="{{ story }}">
+    <button type="submit">❤️ أضف إلى المفضلة</button>
+  </form>
+{% endif %}
+
+<form action="{{ url_for('catalog') }}" method="get" style="display:inline;">
+    <button type="submit">العودة للكتالوج</button>
+</form>
+</body>
+</html>
